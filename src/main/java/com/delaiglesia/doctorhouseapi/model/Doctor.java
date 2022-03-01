@@ -23,4 +23,5 @@ public class Doctor {
 	private int price;
 	private int experience;
 	private String mainImage;
+	private boolean favorite;
 }
