@@ -3,6 +3,7 @@ package com.delaiglesia.doctorhouseapi.controller;
 import com.delaiglesia.doctorhouseapi.model.Doctor;
 import com.delaiglesia.doctorhouseapi.services.DoctorService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/doctors")
 @RequiredArgsConstructor
+@CrossOrigin
 public class DoctorController {
 
 	//this component is injected using constructor injection but
