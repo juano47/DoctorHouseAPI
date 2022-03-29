@@ -1,6 +1,6 @@
 package com.delaiglesia.doctorhouseapi.repository;
 
 import com.delaiglesia.doctorhouseapi.model.Doctor;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
-public interface DoctorRepository extends JpaRepository<Doctor, Integer> { }
+public interface DoctorRepository extends ReactiveMongoRepository<Doctor, String> { }

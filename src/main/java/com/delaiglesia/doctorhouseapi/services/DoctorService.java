@@ -4,9 +4,10 @@ import com.delaiglesia.doctorhouseapi.model.Doctor;
 import com.delaiglesia.doctorhouseapi.repository.DoctorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.List;
 
 @Service
 public class DoctorService {
@@ -18,29 +19,37 @@ public class DoctorService {
 		this.doctorRepository = doctorRepository;
 	}
 
-	public List<Doctor> getDoctors() {
+	public Flux<Doctor> getDoctors() {
 		return doctorRepository.findAll();
 	}
 
-	public Doctor getDoctor(int id) throws EntityNotFoundException {
-		return doctorRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Doctor not found - " + id));
+	public Mono<Doctor> getDoctor(String id) throws EntityNotFoundException {
+		return doctorRepository.findById(id);
 	}
 
-	public Doctor saveDoctor(Doctor doctor){
+	public Mono<Doctor> saveDoctor(Doctor doctor){
 		if (doctor.getId() != null){
 			doctor.setId(null);
 		}
 		return doctorRepository.save(doctor);
 	}
 
-	public Doctor updateDoctor(Doctor doctor, int id) {
-		doctorRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Doctor not found - " + id));
-		doctor.setId(id);
-		return doctorRepository.save(doctor);
+	public Mono<Doctor> updateDoctor(Doctor doctor, String id) {
+		return doctorRepository.findById(id)
+				.flatMap(updateDoctor -> {
+					updateDoctor.setName(doctor.getName());
+					updateDoctor.setLicense(doctor.getLicense());
+					updateDoctor.setSpecialty(doctor.getSpecialty());
+					updateDoctor.setPrice(doctor.getPrice());
+					updateDoctor.setExperience(doctor.getExperience());
+					updateDoctor.setMainImage(doctor.getMainImage());
+					updateDoctor.setFavorite(doctor.isFavorite());
+					return doctorRepository.save(updateDoctor);
+				});
 	}
 
-	public boolean deleteDoctor(int id){
-		doctorRepository.deleteById(id);
-		return true;
+	public Mono<Void> deleteDoctor(String id){
+		return doctorRepository.findById(id)
+				.flatMap(existingDoctor	-> doctorRepository.deleteById(id));
 	}
 }

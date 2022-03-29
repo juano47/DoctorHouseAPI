@@ -2,7 +2,10 @@ package com.delaiglesia.doctorhouseapi.controller;
 
 import com.delaiglesia.doctorhouseapi.model.Doctor;
 import com.delaiglesia.doctorhouseapi.services.DoctorService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,12 +15,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.List;
+import java.time.Duration;
 
 @RestController
-@RequestMapping("/doctors")
+@RequestMapping("/v2/doctors")
 @RequiredArgsConstructor
 @CrossOrigin
 public class DoctorController {
@@ -27,27 +32,41 @@ public class DoctorController {
 	private final DoctorService doctorService;
 
 	@GetMapping
-	public List<Doctor> getDoctors() {
+	public Flux<Doctor> getDoctors() {
 		return doctorService.getDoctors();
 	}
 
 	@GetMapping("/{id}")
-	public Doctor getDoctor(@PathVariable int id) throws EntityNotFoundException {
-		return doctorService.getDoctor(id);
+	public Mono<ResponseEntity<Doctor>> getDoctor(@PathVariable String id) throws EntityNotFoundException {
+		return doctorService.getDoctor(id)
+				.map(saveDoctor -> ResponseEntity.ok(saveDoctor))
+				.defaultIfEmpty(ResponseEntity.notFound().build());
 	}
 
 	@PostMapping
-	public Doctor saveDoctor(@RequestBody Doctor doctor){
+	public Mono<Doctor> saveDoctor(@RequestBody Doctor doctor){
 		return doctorService.saveDoctor(doctor);
 	}
 
 	@PutMapping("/{id}")
-	public Doctor updateDoctor(@RequestBody Doctor doctor, @PathVariable int id){
-		return doctorService.updateDoctor(doctor, id);
+	public Mono<ResponseEntity<Doctor>> updateDoctor(@RequestBody Doctor doctor, @PathVariable String id){
+		return doctorService.updateDoctor(doctor, id)
+				.map(saveDoctor -> ResponseEntity.ok(saveDoctor))
+				.defaultIfEmpty(ResponseEntity.notFound().build());
 	}
 
 	@DeleteMapping("{id}")
-	public boolean deleteDoctor(@PathVariable int id){
-		return doctorService.deleteDoctor(id);
+	public Mono<ResponseEntity<Void>> deleteDoctor(@PathVariable String id){
+		return doctorService.deleteDoctor(id)
+				.then(Mono.just(ResponseEntity.ok().<Void>build())
+				.defaultIfEmpty(ResponseEntity.notFound().build()));
+	}
+
+	//messages are Sent to the client as Server Sent Events
+	//devuelve los objetos de a 1 (cada 2seg), no todos juntos como un endpoint comun
+	@ApiOperation(value = "devuelve los objetos de a 1 (cada 2seg), no todos juntos como un endpoint comun")
+	@GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+	public Flux<Doctor> streamAllMessages(){
+		return doctorService.getDoctors().delayElements(Duration.ofSeconds(2));
 	}
 }

@@ -35,9 +35,9 @@ public class Swagger2Config {
 	
 	private ApiInfo apiInfo() {
 	    return new ApiInfo(
-	      "Doctor House API",
-	      "Some custom description of API.", 
-	      "1.0",
+	      "Doctor House API V2",
+	      "API REST con programacion reactiva",
+	      "2.0",
 	      "Terms of service", 
 	      new Contact("DoctorHouse", "www.doctorhouse.com", "contacto@doctorhouse.com"),
 	      "License of API", "API license URL", Collections.emptyList());
