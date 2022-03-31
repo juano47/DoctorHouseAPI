@@ -32,8 +32,9 @@ public class DoctorController {
 	private final DoctorService doctorService;
 
 	@GetMapping
+	@ApiOperation(value = "return the elements at the same time and also it have a delay of 1 second")
 	public Flux<Doctor> getDoctors() {
-		return doctorService.getDoctors();
+		return doctorService.getDoctors().delayElements(Duration.ofSeconds(1));
 	}
 
 	@GetMapping("/{id}")
@@ -62,11 +63,11 @@ public class DoctorController {
 				.defaultIfEmpty(ResponseEntity.notFound().build()));
 	}
 
-	//messages are Sent to the client as Server Sent Events
-	//devuelve los objetos de a 1 (cada 2seg), no todos juntos como un endpoint comun
-	@ApiOperation(value = "devuelve los objetos de a 1 (cada 2seg), no todos juntos como un endpoint comun")
+	//messages are Sent to the client as Server Sent Events	@ApiOperation(value = "return the elements one by one and also it have a delay of 1 second")
 	@GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
 	public Flux<Doctor> streamAllMessages(){
-		return doctorService.getDoctors().delayElements(Duration.ofSeconds(2));
+		return doctorService.getDoctors()
+				.delayElements(Duration.ofSeconds(1))
+				.log("DoctorController.streamAllDoctors");
 	}
 }
