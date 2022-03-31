@@ -34,7 +34,8 @@ public class DoctorController {
 	@GetMapping
 	@ApiOperation(value = "return the elements at the same time and also it have a delay of 1 second")
 	public Flux<Doctor> getDoctors() {
-		return doctorService.getDoctors().delayElements(Duration.ofSeconds(1));
+		return doctorService.getDoctors().
+				delayElements(Duration.ofMillis(500));
 	}
 
 	@GetMapping("/{id}")
@@ -67,7 +68,7 @@ public class DoctorController {
 	@GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
 	public Flux<Doctor> streamAllMessages(){
 		return doctorService.getDoctors()
-				.delayElements(Duration.ofSeconds(1))
+				.delayElements(Duration.ofMillis(500))
 				.log("DoctorController.streamAllDoctors");
 	}
 }
