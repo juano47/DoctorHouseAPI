@@ -2,6 +2,7 @@ package com.delaiglesia.doctorhouseapi.services;
 
 import com.delaiglesia.doctorhouseapi.model.Doctor;
 import com.delaiglesia.doctorhouseapi.repository.DoctorRepository;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -10,6 +11,7 @@ import reactor.core.publisher.Mono;
 import javax.persistence.EntityNotFoundException;
 
 @Service
+@Log4j2
 public class DoctorService {
 
 	//Constructor injection mode
@@ -48,8 +50,7 @@ public class DoctorService {
 				});
 	}
 
-	public Mono<Void> deleteDoctor(String id){
-		return doctorRepository.findById(id)
-				.flatMap(existingDoctor	-> doctorRepository.deleteById(id));
+	public Mono<Void> deleteDoctor(Doctor doctor){
+		return doctorRepository.delete(doctor);
 	}
 }

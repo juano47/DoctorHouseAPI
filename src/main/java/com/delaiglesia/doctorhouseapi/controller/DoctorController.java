@@ -4,6 +4,7 @@ import com.delaiglesia.doctorhouseapi.model.Doctor;
 import com.delaiglesia.doctorhouseapi.services.DoctorService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -59,9 +60,12 @@ public class DoctorController {
 
 	@DeleteMapping("{id}")
 	public Mono<ResponseEntity<Void>> deleteDoctor(@PathVariable String id){
-		return doctorService.deleteDoctor(id)
-				.then(Mono.just(ResponseEntity.ok().<Void>build())
-				.defaultIfEmpty(ResponseEntity.notFound().build()));
+		return doctorService.getDoctor(id)
+				.flatMap(s ->
+						doctorService.deleteDoctor(s)
+								.then(Mono.just(ResponseEntity.ok().<Void>build()))
+				)
+				.defaultIfEmpty(ResponseEntity.notFound().build());
 	}
 
 	//messages are Sent to the client as Server Sent Events
