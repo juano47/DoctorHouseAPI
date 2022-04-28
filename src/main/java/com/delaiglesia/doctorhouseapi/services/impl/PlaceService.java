@@ -1,4 +1,4 @@
-package com.delaiglesia.doctorhouseapi.services;
+package com.delaiglesia.doctorhouseapi.services.impl;
 
 import com.delaiglesia.doctorhouseapi.model.Place;
 import com.delaiglesia.doctorhouseapi.repository.PlaceRepository;

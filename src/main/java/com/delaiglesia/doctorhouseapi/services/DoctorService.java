@@ -1,46 +1,18 @@
 package com.delaiglesia.doctorhouseapi.services;
 
 import com.delaiglesia.doctorhouseapi.model.Doctor;
-import com.delaiglesia.doctorhouseapi.repository.DoctorRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
-@Service
-public class DoctorService {
+public interface DoctorService {
+	List<Doctor> getDoctors();
 
-	//Constructor injection mode
-	private final DoctorRepository doctorRepository;
-	@Autowired //only use this annotation if exists more than one constructor
-	public DoctorService(DoctorRepository doctorRepository) {
-		this.doctorRepository = doctorRepository;
-	}
+	Doctor getDoctor(int id) throws EntityNotFoundException;
 
-	public List<Doctor> getDoctors() {
-		return doctorRepository.findAll();
-	}
+	Doctor saveDoctor(Doctor doctor);
 
-	public Doctor getDoctor(int id) throws EntityNotFoundException {
-		return doctorRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Doctor not found - " + id));
-	}
+	Doctor updateDoctor(Doctor doctor, int id);
 
-	public Doctor saveDoctor(Doctor doctor){
-		if (doctor.getId() != null){
-			doctor.setId(null);
-		}
-		return doctorRepository.save(doctor);
-	}
-
-	public Doctor updateDoctor(Doctor doctor, int id) {
-		doctorRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Doctor not found - " + id));
-		doctor.setId(id);
-		return doctorRepository.save(doctor);
-	}
-
-	public boolean deleteDoctor(int id){
-		doctorRepository.deleteById(id);
-		return true;
-	}
+	boolean deleteDoctor(int id);
 }
