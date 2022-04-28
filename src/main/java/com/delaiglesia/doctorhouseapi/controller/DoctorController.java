@@ -1,5 +1,6 @@
 package com.delaiglesia.doctorhouseapi.controller;
 
+import com.delaiglesia.doctorhouseapi.aspect.CheckFeatureFlag;
 import com.delaiglesia.doctorhouseapi.model.Doctor;
 import com.delaiglesia.doctorhouseapi.services.DoctorService;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,7 @@ public class DoctorController {
 	}
 
 	@GetMapping("/{id}")
+	@CheckFeatureFlag(flag = "features.endpoints.doctor.getById")
 	public Doctor getDoctor(@PathVariable int id) throws EntityNotFoundException {
 		return doctorService.getDoctor(id);
 	}
