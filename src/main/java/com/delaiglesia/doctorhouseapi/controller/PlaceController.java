@@ -1,7 +1,7 @@
 package com.delaiglesia.doctorhouseapi.controller;
 
 import com.delaiglesia.doctorhouseapi.model.Place;
-import com.delaiglesia.doctorhouseapi.services.PlaceService;
+import com.delaiglesia.doctorhouseapi.services.impl.PlaceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
