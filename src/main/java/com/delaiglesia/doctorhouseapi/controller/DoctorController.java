@@ -3,6 +3,7 @@ package com.delaiglesia.doctorhouseapi.controller;
 import com.delaiglesia.doctorhouseapi.model.Doctor;
 import com.delaiglesia.doctorhouseapi.services.DoctorService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +21,8 @@ import java.util.List;
 @RequestMapping("/doctors")
 @RequiredArgsConstructor
 @CrossOrigin
+//no se puede usar a nivel de Service y ponerlo en false, porque no levanta ya que detecta que no existe el Bean
+@ConditionalOnProperty(name = "features.controllers.doctor")
 public class DoctorController {
 
 	//this component is injected using constructor injection but
