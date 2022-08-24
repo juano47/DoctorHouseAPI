@@ -4,6 +4,7 @@ import com.delaiglesia.doctorhouseapi.model.Doctor;
 import com.delaiglesia.doctorhouseapi.repository.DoctorRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -21,8 +22,8 @@ public class DoctorService {
 		this.doctorRepository = doctorRepository;
 	}
 
-	public Flux<Doctor> getDoctors() {
-		return doctorRepository.findAll();
+	public Flux<Doctor> getDoctors(Pageable pageable) {
+		return doctorRepository.findAllByIdNotNull(pageable);
 	}
 
 	public Mono<Doctor> getDoctor(String id) throws EntityNotFoundException {

@@ -4,7 +4,8 @@ import com.delaiglesia.doctorhouseapi.model.Doctor;
 import com.delaiglesia.doctorhouseapi.services.DoctorService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -34,8 +35,8 @@ public class DoctorController {
 
 	@GetMapping
 	@ApiOperation(value = "return the elements AT THE SAME TIME and also it have a delay of 1 second")
-	public Flux<Doctor> getDoctors() {
-		return doctorService.getDoctors().
+	public Flux<Doctor> getDoctors(@PageableDefault(page = 0, size = 20) Pageable pageable) {
+		return doctorService.getDoctors(pageable).
 				delayElements(Duration.ofMillis(500));
 	}
 
@@ -71,8 +72,8 @@ public class DoctorController {
 	//messages are Sent to the client as Server Sent Events
 	@ApiOperation(value = "return the elements ONE BY ONE and also it have a delay of 1 second")
 	@GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-	public Flux<Doctor> streamAllMessages(){
-		return doctorService.getDoctors()
+	public Flux<Doctor> streamAllMessages(@PageableDefault(page = 0, size = 20) Pageable pageable){
+		return doctorService.getDoctors(pageable)
 				.delayElements(Duration.ofMillis(500))
 				.log("DoctorController.streamAllDoctors");
 	}
