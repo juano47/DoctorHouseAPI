@@ -1,5 +1,6 @@
 package com.delaiglesia.doctorhouseapi.services;
 
+import com.delaiglesia.doctorhouseapi.controller.dto.FavoriteDoctorDto;
 import com.delaiglesia.doctorhouseapi.model.Doctor;
 import com.delaiglesia.doctorhouseapi.repository.DoctorRepository;
 import lombok.extern.log4j.Log4j2;
@@ -10,6 +11,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Log4j2
@@ -53,5 +56,15 @@ public class DoctorService {
 
 	public Mono<Void> deleteDoctor(Doctor doctor){
 		return doctorRepository.delete(doctor);
+	}
+
+	public void updateDoctorFavorites(List<FavoriteDoctorDto> favoriteDoctors) {
+		List<String> ids = favoriteDoctors.stream().map(FavoriteDoctorDto::getId).collect(Collectors.toList());
+		Flux<Doctor> doctors = doctorRepository.findAllById(ids);
+		doctors.subscribe(doctor -> {
+			FavoriteDoctorDto favoriteDoctor = favoriteDoctors.stream().filter(favorite -> favorite.getId().equals(doctor.getId())).findFirst().get();
+			doctor.setFavorite(favoriteDoctor.isFavorite());
+			doctorRepository.save(doctor).subscribe();
+		});
 	}
 }

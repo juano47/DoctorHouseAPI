@@ -1,5 +1,6 @@
 package com.delaiglesia.doctorhouseapi.controller;
 
+import com.delaiglesia.doctorhouseapi.controller.dto.FavoriteDoctorDto;
 import com.delaiglesia.doctorhouseapi.model.Doctor;
 import com.delaiglesia.doctorhouseapi.services.DoctorService;
 import io.swagger.annotations.ApiOperation;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -22,6 +24,7 @@ import reactor.core.publisher.Mono;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.Duration;
+import java.util.List;
 
 @RestController
 @RequestMapping("/v2/doctors")
@@ -57,6 +60,13 @@ public class DoctorController {
 		return doctorService.updateDoctor(doctor, id)
 				.map(saveDoctor -> ResponseEntity.ok(saveDoctor))
 				.defaultIfEmpty(ResponseEntity.notFound().build());
+	}
+
+	@PatchMapping("/favorites")
+	public Mono<ResponseEntity<Void>> updateDoctor(@RequestBody List<FavoriteDoctorDto> favoriteDoctors){
+		doctorService.updateDoctorFavorites(favoriteDoctors);
+		return Mono.just(ResponseEntity.ok().build());
+
 	}
 
 	@DeleteMapping("{id}")
